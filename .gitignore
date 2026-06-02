@@ -6,4 +6,6 @@
 /assets/images/common/instagram.svg
 /assets/images/common/youtube.svg
 /assets/images/common/logo-placeholder.svg
-/assets/json/
+/assets/json/*
+!/assets/json/
+!/assets/json/exercise.json
