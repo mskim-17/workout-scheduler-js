@@ -189,7 +189,6 @@
   - `main-page-2`에서 위쪽 스크롤 시
     - 첫 번째 컨텐츠일 경우 `.scrollIntoView()`를 이용해 `main-page-1`으로 이동
     - 아닐 경우 앞의 컨텐츠를 보여주도록 `subPage2Scroll()` 함수 실행
-    - 
 ### `onboard.html`
 - 사용된 이미지의 출처는 다음과 같다.
   - <a href="https://www.flaticon.com/free-icons/calendar" title="calendar icons">Calendar icons created by Anggara - Flaticon</a>
