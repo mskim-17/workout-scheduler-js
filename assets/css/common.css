@@ -1,0 +1,183 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+@import url('https://fonts.googleapis.com/css2?family=Elms+Sans:ital,wght@0,100..900;1,100..900&display=swap');
+
+* {
+  font-family: 'Pretendard Variable', 'Pretendard', sans-serif;
+}
+
+html {
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+main {
+  padding-top: 60px;
+  position: relative;
+}
+
+:root {
+  --border-color: 200, 200, 200;
+  --bg-color: 255, 255, 255;
+  --bg-color2: 249, 249, 249;
+  --bg-color3: 230, 230, 230;
+  --shadow-color: 64, 64, 64;
+  --theme-color: 0, 148, 247;
+  --theme-color2: 0, 50, 83;
+  --text-color: 0, 0, 0;
+  --subtext-color: 60, 60, 60;
+
+  --bg-color-invert: 0, 0, 0;
+  --theme-color-invert: 255, 107, 8;
+  --text-color-invert: 255, 255, 255;
+  --subtext-color-invert: 195, 195, 195;
+
+  --smalltext-color: 120, 120, 120;
+  --errortext-color: 220, 20, 60;
+}
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button,
+input[type="password"]::-webkit-clear-button {
+  display: none;
+}
+
+button * {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+html {
+  /* scrollbar-color: var(--scrollbar-thumb) var(--body-bg-color); */
+  scrollbar-width: thin;
+}
+
+input[type='number'] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+button {
+  display: inline-block;
+  margin-bottom: 10px;
+  background-color: #eee;
+  /* border: 1px solid rgb(var(--border-color)); */
+  border: 0 none;
+  box-sizing: border-box;
+  transition: transform 0.15s ease-out, filter 0.15s ease-out, font-weight 0.3s ease;
+}
+
+button.with-theme-color {
+  color: white;
+  font-weight: 700;
+  background-color: rgb(var(--theme-color));
+}
+
+button:not(:disabled):hover {
+  filter: brightness(90%);
+  font-weight: 700;
+  transform: scale(1.02);
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 30%;
+}
+
+button:not(:disabled):active {
+  filter: brightness(80%);
+  transform: scale(0.97);
+}
+
+.error-msg {
+  color: rgb(var(--errortext-color));
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 125%;
+  display: block;
+}
+
+textarea,
+input {
+  transition: box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+textarea {
+  border: 1px solid rgba(var(--border-color), 0.5);
+  border-radius: 6px;
+}
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="password"]:focus {
+  box-shadow: 0 0px 4px 2px rgba(var(--theme-color), 0.4) !important;
+  border-color: transparent;
+  outline: 0 none;
+}
+
+.input-group button.toggle-password {
+  position: absolute;
+  margin-bottom: 0;
+  right: 8px;
+  bottom: 8px;
+  background-color: rgb(var(--bg-color));
+
+  width: 28px;
+  height: 28px;
+  border-radius: 50px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  transition: 0.1s ease;
+}
+
+.input-group button.toggle-password:not(.show):not(:hover) {
+  opacity: 0;
+}
+
+.input-group button.toggle-password.show {
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+.input-group input:hover+button.toggle-password:not(.show),
+.input-group .toggle-password:hover {
+  opacity: 0.5;
+}
+
+.logoText {
+  font-family: 'Elms Sans', sans-serif;
+  letter-spacing: -0.05em;
+  word-spacing: -0.2em;
+  padding-right: 0.05em;
+  font-weight: 700;
+}
+
+strong.logoText {
+  color: rgb(var(--theme-color2)) !important;
+}
+
+.inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}

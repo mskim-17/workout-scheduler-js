@@ -1,0 +1,264 @@
+main h1 {
+  font-size: 40px;
+  font-family: 'Elms Sans', sans-serif;
+  font-weight: 600;
+  text-align: center;
+}
+
+main h1 a {
+  text-decoration: none;
+  color: inherit;
+  user-select: none;
+}
+
+.inquiry-list-inner {
+  margin: 60px auto 0;
+  max-width: 1000px;
+}
+
+.board-container {
+  width: 100%;
+
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  background-color: #ffffff;
+
+  margin: 40px 20px;
+  box-sizing: border-box;
+
+  min-height: 100%;
+  flex-grow: 1;
+}
+
+.board-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.board-table th,
+.board-table td {
+  height: 40px;
+  text-align: center;
+  vertical-align: middle;
+
+  border-bottom: 1px solid rgb(var(--border-color));
+}
+
+.board-table td:first-of-type {
+  padding: 0;
+}
+
+.board-table tbody {
+  border-top: 3px solid rgb(var(--border-color));
+  border-bottom: 3px solid rgb(var(--border-color));
+}
+
+.board-table tbody tr:hover td {
+  backdrop-filter: brightness(97%);
+}
+
+.board-table th {
+  font-size: 16px;
+  font-weight: 600;
+
+  user-select: none;
+  pointer-events: none;
+}
+
+.board-table td {
+  font-size: 15px;
+}
+
+.board-table .status-col {
+  width: 15%;
+}
+
+.board-table .title-col {
+  width: 50%;
+}
+
+.board-table .author-col {
+  width: 15%;
+}
+
+.board-table .date-col {
+  width: 20%;
+}
+
+.board-table td.title {
+  text-align: center;
+  font-size: 16px;
+}
+
+.board-table td.title a:hover {
+  text-decoration: underline;
+}
+
+.board-table td.author span,
+.board-table td.date span{
+  font-size: 14px;
+  opacity: 60%;
+
+  pointer-events: none;
+  user-select: none;
+}
+
+.board-table td.title a {
+  text-decoration: none;
+  color: inherit;
+
+  display: inline-block;
+  font-weight: 500;
+  max-width: 500px;
+  /* 컬럼 내부에서 제목이 차지할 최대 너비 */
+  text-align: left;
+  /* 글자가 두 줄이 될 경우를 대비한 왼쪽 정렬 */
+  vertical-align: middle;
+
+  /* 제목이 지나치게 길 경우 말줄임표(...) 처리 */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  user-select: none;
+}
+
+.board-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0px;
+}
+
+.board-pagination button {
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+
+  background-color: #fff;
+  cursor: pointer;
+  box-sizing: border-box;
+  margin: 0 3px;
+
+  border-radius: 18px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.board-pagination button.prev-page-btn {
+  margin-right: 20px;
+}
+
+.board-pagination button.next-page-btn {
+  margin-left: 20px;
+}
+
+.board-pagination button.prev-page-btn img {
+  width: 16px;
+  height: 16px;
+  transform: rotate(90deg);
+}
+
+.board-pagination button.next-page-btn img {
+  width: 16px;
+  height: 16px;
+  transform: rotate(-90deg);
+}
+
+.board-pagination button.active {
+  background-color: rgb(var(--theme-color));
+  font-weight: 700;
+  color: white;
+}
+
+
+.board-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+
+  gap: 20px;
+}
+
+.search-box {
+  display: flex;
+  gap: 8px;
+}
+
+.search-box select,
+.search-box input,
+.search-box button {
+  height: 30px;
+  padding: 0 15px;
+  box-sizing: border-box;
+  border-radius: 20px;
+}
+
+.search-box select {
+  width: 120px;
+  margin-bottom: 0;
+  text-align: left;
+}
+
+.search-box .select-wrapper {
+  position: relative;
+  height: 30px;
+}
+
+.search-box .select-wrapper img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translateX(45px);
+  width: 13px;
+  height: 13px;
+
+  pointer-events: none;
+  user-select: none;
+  opacity: 70%;
+}
+
+.search-box input {
+  border: 1px solid rgb(var(--border-color));
+}
+
+.search-box input {
+  width: 240px;
+  padding: 0 12px;
+}
+
+.btn-write {
+  font-size: 14px;
+  padding: 10px 16px;
+  box-sizing: border-box;
+  height: 36px;
+  border-radius: 18px;
+}
+
+.answered,
+.not-answered {
+  display: inline-flex;
+  height: 24px;
+  padding: 0 12px;
+  box-sizing: border-box;
+  border-radius: 12px;
+  font-size: 12px;
+  line-height: 95%;
+  font-weight: 500;
+
+  align-items: center;
+  pointer-events: none;
+  user-select: none;
+}
+
+.not-answered {
+  background-color: rgb(var(--bg-color3));
+  color: rgb(var(--subtext-color));
+}
+
+.answered {
+  background-color: rgb(var(--theme-color));
+  color: white;
+}

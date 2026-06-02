@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>글목록</title>
+  <link rel="stylesheet" href="/assets/css/reset.css">
+  <link rel="stylesheet" href="/assets/css/common.css">
+  <link rel="stylesheet" href="/components/header.css">
+  <link rel="stylesheet" href="/assets/css/pages/community/inquiry-list.css">
+</head>
+
+<body>
+  <div id="header-container"></div>
+  <main>
+    <div class="inquiry-list-inner">
+      <h1><a href="inquiry-list.html">Q&A</a></h1>
+      <section class="board-container">
+        <table class="board-table">
+          <thead>
+            <tr>
+              <th class="status-col">상태</th>
+              <th class="title-col">제목</th>
+              <th class="author-col">작성자</th>
+              <th class="date-col">작성일</th>
+            </tr>
+          </thead>
+
+          <tbody id="board-body"></tbody>
+        </table>
+
+        <div class="board-pagination" id="pagination-container"></div>
+        <div class="board-bottom">
+          <div class="search-box">
+            <div class="select-wrapper">
+              <select>
+                <option>제목/내용</option>
+                <option>제목</option>
+                <option>작성자</option>
+              </select>
+              <img src="/assets/images/common/angle-down-solid.svg" alt="">
+            </div>
+            <input type="text" placeholder="검색어를 입력하세요">
+            <button type="button">검색</button>
+          </div>
+          <button type="button" class="btn-write with-theme-color">글쓰기</button>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="footer-container"></div>
+  <script type="module">
+    import { mountHeader } from "/components/header.js";
+    const headerContainer = document.getElementById('header-container');
+    
+    await mountHeader(headerContainer);
+
+    (function () {
+      if (!localStorage.getItem('posts')) {
+        const dummyPosts = [
+          {
+            "id": "dummy-uuid-0001",
+            "title": "루틴 추천 기능은 어디서 이용하나요?",
+            "author": "테스터1",
+            "authorId": "user1",
+            "content": "하체 근력 향상을 위한 분할 운동 루틴을 추천받고 싶은데, 추천 메뉴가 보이질 않네요.",
+            "date": "2026. 5. 1.",
+            "answered": true,
+            "reply": "안녕하세요 회원님. 마이페이지 내 'AI 맞춤 루틴 설정' 탭에서 목표 부위를 선택하시면 확인하실 수 있습니다.",
+            "replyDate": "2026. 5. 2."
+          },
+          {
+            "id": "dummy-uuid-0002",
+            "title": "식단 기록에 닭가슴살 커스텀 등록 요청",
+            "author": "테스터2",
+            "authorId": "user2",
+            "content": "오늘 먹은 식단을 기록하려는데 제가 먹는 브랜드의 영양성분이 없어요. 직접 그람수랑 단백질량을 입력하는 기능이 필요합니다.",
+            "date": "2026. 5. 3.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0003",
+            "title": "애플워치 활동 데이터 연동 오류",
+            "author": "테스터3",
+            "authorId": "user3",
+            "content": "오늘 오전에 유산소 운동을 하고 워치 앱을 연동했는데, 칼로리 소모량이 사이트 대시보드에 반영되지 않고 있습니다.",
+            "date": "2026. 5. 5.",
+            "answered": true,
+            "reply": "불편을 드려 죄송합니다. 간헐적인 서버 동기화 지연으로 확인되어 현재는 정상 반영되도록 조치 완료했습니다.",
+            "replyDate": "2026. 5. 6."
+          },
+          {
+            "id": "dummy-uuid-0004",
+            "title": "인바디 데이터 그래프 축소 질문",
+            "author": "테스터4",
+            "authorId": "user4",
+            "content": "체지방률 변화 그래프를 3달 단위가 아니라 1년 단위로 길게 모아보고 싶은데 설정하는 방법이 있나요?",
+            "date": "2026. 5. 7.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0005",
+            "title": "오운완 인증 게시판 이미지 업로드 제한",
+            "author": "테스터1",
+            "authorId": "user1",
+            "content": "오늘 운동 완료 인증 사진을 올리려고 하는데 용량 제한이 몇 MB까지인가요? 고화질이라 그런지 자꾸 실패하네요.",
+            "date": "2026. 5. 9.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0006",
+            "title": "캘린더에 운동 휴식일 표시 기능",
+            "author": "테스터2",
+            "authorId": "user2",
+            "content": "매일 운동하는 것만 기록되는데, 의도적으로 쉬는 '리커버리 데이(휴식일)'를 지정해서 컬러를 다르게 표시하고 싶습니다.",
+            "date": "2026. 5. 10.",
+            "answered": true,
+            "reply": "좋은 제안 감사합니다. 캘린더 등록 시 '휴식' 카테고리를 추가하여 시각적으로 구분할 수 있도록 업데이트하겠습니다.",
+            "replyDate": "2026. 5. 11."
+          },
+          {
+            "id": "dummy-uuid-0007",
+            "title": "스트레칭 가이드 동영상 재생 안 됨",
+            "author": "테스터3",
+            "authorId": "user3",
+            "content": "운동 전 스트레칭 가이드 영상 버튼을 누르면 검은 화면만 나오고 버퍼링만 걸립니다. 확인 부탁드립니다.",
+            "date": "2026. 5. 12.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0008",
+            "title": "PT 매칭 서비스 환불 규정 문의",
+            "author": "테스터4",
+            "authorId": "user4",
+            "content": "온라인 PT 코칭권을 10회 결제했는데, 사정이 생겨서 3회만 진행하고 중단하게 되었습니다. 남은 7회분 환불 가능한가요?",
+            "date": "2026. 5. 14.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0009",
+            "title": "목표 음수량 알림이 오지 않습니다.",
+            "author": "테스터1",
+            "authorId": "user1",
+            "content": "하루 2L 물 마시기 알림 설정을 켜두었는데 모바일 브라우저 푸시 알림이 전혀 들어오지 않네요.",
+            "date": "2026. 5. 15.",
+            "answered": true,
+            "reply": "브라우저 자체의 알림 권한이 '차단'되어 있을 수 있습니다. 주소창 좌측 자물쇠 아이콘을 눌러 권한을 허용해 주세요.",
+            "replyDate": "2026. 5. 16."
+          },
+          {
+            "id": "dummy-uuid-0010",
+            "title": "10번째 게시글 (페이징 테스트용 하체 루틴 문의)",
+            "author": "테스터2",
+            "authorId": "user2",
+            "content": "스쿼트 중량이 정체기인데 이를 뚫기 위한 스트렝스 프로그램 구성 팁이 있을까요?",
+            "date": "2026. 5. 17.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0011",
+            "title": "[2페이지 시작] 트랙킹 세션 초기화 문제",
+            "author": "테스터3",
+            "authorId": "user3",
+            "content": "러닝 머신 뛰면서 실시간 운동 타이머를 켜놨는데, 화면 잠금이 되면 타이머가 멈추거나 리셋됩니다.",
+            "date": "2026. 5. 18.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0012",
+            "title": "크레아틴 영양제 섭취 타이밍 질문",
+            "author": "테스터4",
+            "authorId": "user4",
+            "content": "여기 식단 가이드에는 운동 후에 먹으라고 되어있는데, 부스터처럼 운동 전에 먹으면 안 되나요?",
+            "date": "2026. 5. 20.",
+            "answered": true,
+            "reply": "크레아틴은 체내 저장량이 중요하므로 일정한 시간에 꾸준히 드시는 것이 가장 중요하며, 운동 직후 흡수율이 조금 더 높습니다.",
+            "replyDate": "2026. 5. 21."
+          },
+          {
+            "id": "dummy-uuid-0013",
+            "title": "홈트레이닝 저항밴드 챌린지 신청 오류",
+            "author": "테스터1",
+            "authorId": "user1",
+            "content": "6월 맨몸운동/밴드 홈트 챌린지 신청 버튼을 누르면 '이미 신청된 유저'라고 나오는데 신청 내역에는 안 뜹니다.",
+            "date": "2026. 5. 21.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0014",
+            "title": "운동 메이트 매칭 지역 설정 변경",
+            "author": "테스터2",
+            "authorId": "user2",
+            "content": "같이 동네 헬스장에서 운동할 파트너 구하는 구인 글 쓸 때, 구/동 단위 정보를 수정하고 싶은데 프로필에서 안 바뀝니다.",
+            "date": "2026. 5. 22.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0015",
+            "title": "프리미엄 멤버십 뱃지 미노출",
+            "author": "테스터3",
+            "authorId": "user3",
+            "content": "스포츠 멤버십 구독 결제를 완료했는데 커뮤니티 게시판에 제 닉네임 옆에 왕관 뱃지가 안 나타나요.",
+            "date": "2026. 5. 23.",
+            "answered": true,
+            "reply": "결제 정보가 커뮤니티 프로필에 동기화되는 과정에서 누락되었습니다. 수동으로 뱃지 활성화 처리해 드렸습니다.",
+            "replyDate": "2026. 5. 24."
+          },
+          {
+            "id": "dummy-uuid-0016",
+            "title": "바디프로필 디데이(D-Day) 설정 기능",
+            "author": "테스터4",
+            "authorId": "user4",
+            "content": "대시보드 상단에 바디프로필이나 대회 날짜 설정해서 D-100 같은 디데이 카운트다운이 보였으면 좋겠습니다.",
+            "date": "2026. 5. 25.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0017",
+            "title": "고강도 인터벌 트레이닝(HIIT) 타이머 건의",
+            "author": "테스터1",
+            "authorId": "user1",
+            "content": "일반 타이머 말고 30초 운동, 10초 휴식 이런 식으로 라운드를 커스텀 세팅할 수 있는 인터벌 전용 타이머 기능이 추가되면 좋겠습니다.",
+            "date": "2026. 5. 26.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0018",
+            "title": "기초대사량 계산기 공식 기준 문의",
+            "author": "테스터2",
+            "authorId": "user2",
+            "content": "사이트에서 계산해 주는 기초대사량 수치가 헬스장 인바디 기계랑 좀 다른데, 해리스-베네딕트 공식을 사용하나요?",
+            "date": "2026. 5. 27.",
+            "answered": true,
+            "reply": "네, 맞습니다. 저희 사이트는 해리스-베네딕트 개정 공식을 기본 채택하고 있으며, 오차는 입력하신 활동량 계수에 따라 발생할 수 있습니다.",
+            "replyDate": "2026. 5. 28."
+          },
+          {
+            "id": "dummy-uuid-0019",
+            "title": "허리 통증 유저를 위한 대체 운동 질문",
+            "author": "테스터3",
+            "authorId": "user3",
+            "content": "루틴에 데드리프트가 포함되어 있는데 제가 요추 디스크가 약간 있어서요. 허리에 무리 안 가면서 등 전체를 타겟팅할 운동 추천해 주세요.",
+            "date": "2026. 5. 29.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          },
+          {
+            "id": "dummy-uuid-0020",
+            "title": "최신 정렬 확인용 오운완 리포트 피드백 요청",
+            "author": "테스터4",
+            "authorId": "user4",
+            "content": "한 달 동안 공복 유산소와 웨이트 트레이닝을 병행한 통합 리포트 분석 결과가 너무 만족스럽네요. 정렬 순서 테스트 겸 글 남깁니다.",
+            "date": "2026. 5. 31.",
+            "answered": false,
+            "reply": "",
+            "replyDate": ""
+          }
+        ];
+        localStorage.setItem('posts', JSON.stringify(dummyPosts));
+      }
+    })();
+
+    let currentPage = 1;
+    const COUNT_PER_PAGE = 8;
+
+    let currentSearchOption = '제목/내용';
+    let currentSearchKeyword = '';
+
+    // 1. 로컬 스토리지에서 게시글 목록 가져오기 (없으면 빈 배열)
+    function getPosts() {
+      const posts = localStorage.getItem('posts');
+      return posts ? JSON.parse(posts) : [];
+    }
+
+    // 2. 게시글 목록을 화면에 그리는 함수
+    function renderBoard() {
+      const postList = getPosts();
+      const boardBody = document.getElementById('board-body');
+
+      boardBody.innerHTML = '';
+
+      // [검색 필터링] 검색어가 존재하는 경우 조건에 따라 필터링
+      let filteredPosts = [...postList];
+      if (currentSearchKeyword.trim() !== '') {
+        filteredPosts = postList.filter(post => {
+          const keyword = currentSearchKeyword.toLowerCase();
+          const title = (post.title || '').toLowerCase();
+          const content = (post.content || '').toLowerCase();
+          const author = (post.author || '').toLowerCase();
+
+          if (currentSearchOption === '제목/내용') {
+            return title.includes(keyword) || content.includes(keyword);
+          } else if (currentSearchOption === '제목') {
+            return title.includes(keyword);
+          } else if (currentSearchOption === '작성자') {
+            return author.includes(keyword);
+          }
+          return true;
+        });
+      }
+
+      // 검색 결과가 없을 때
+      if (filteredPosts.length === 0) {
+        boardBody.innerHTML = `<tr><td colspan="4" style="text-align:center; padding:30px;">게시글이 없습니다.</td></tr>`;
+        renderPagination(0);
+        return;
+      }
+
+      // 필터링된 데이터를 기준으로 최신글 순 정렬
+      const reversedPosts = filteredPosts.reverse();
+
+      const startIndex = (currentPage - 1) * COUNT_PER_PAGE;
+      const endIndex = startIndex + COUNT_PER_PAGE;
+      const pagePosts = reversedPosts.slice(startIndex, endIndex);
+
+      pagePosts.forEach(post => {
+        const statusText = post.answered ? '답변완료' : '처리중';
+        const row = document.createElement('tr');
+        let displayDate = post.date;
+        if (displayDate && displayDate.includes('-')) {
+          const parts = displayDate.split(' ')[0].split('-');
+          displayDate = `${parts[0]}. ${parseInt(parts[1])}. ${parseInt(parts[2])}.`;
+        }
+        row.innerHTML = `
+                    <td><span class="${post.answered ? "answered" : "not-answered"}">${statusText}</span></td>
+                    <td class="title"><a href="inquiry-view.html?id=${post.id}">${post.title}</a></td>
+                    <td class="author"><span>${post.author}</span></td>
+                    <td class="date"><span>${displayDate}</span></td>
+                `;
+        boardBody.appendChild(row);
+      });
+
+      renderPagination(reversedPosts.length);
+    }
+
+    // 하단 페이지 번호 버튼을 동적으로 그려주는 함수
+    function renderPagination(totalCount) {
+      const paginationContainer = document.getElementById('pagination-container');
+      paginationContainer.innerHTML = '';
+
+      if (totalCount === 0) return;
+
+      // 총 페이지 수 계산 (예: 11개 글 -> 2페이지)
+      const totalPages = Math.ceil(totalCount / COUNT_PER_PAGE);
+
+      // 이전 페이지 이동 버튼 (<)
+      const prevBtn = document.createElement('button');
+      prevBtn.type = 'button';
+      prevBtn.classList.add('prev-page-btn');
+      prevBtn.innerHTML = `<img src="/assets/images/common/angle-down-solid.svg" alt="">`;
+      prevBtn.disabled = currentPage === 1; // 1페이지면 비활성화
+      prevBtn.addEventListener('click', () => {
+        if (currentPage > 1) {
+          currentPage--;
+          renderBoard();
+        }
+      });
+      paginationContainer.appendChild(prevBtn);
+
+      // 숫자 페이지 버튼들 동적 생성
+      for (let i = 1; i <= totalPages; i++) {
+        const pageBtn = document.createElement('button');
+        pageBtn.type = 'button';
+        pageBtn.textContent = i;
+
+        // 현재 보고 있는 페이지 버튼에 스타일 변화 부여용 (선택 사항)
+        pageBtn.classList.toggle('active', i === currentPage);
+
+        pageBtn.addEventListener('click', () => {
+          currentPage = i;
+          renderBoard();
+        });
+        paginationContainer.appendChild(pageBtn);
+      }
+
+      // 다음 페이지 이동 버튼 (>)
+      const nextBtn = document.createElement('button');
+      nextBtn.type = 'button';
+      nextBtn.classList.add('next-page-btn');
+      nextBtn.innerHTML = `<img src="/assets/images/common/angle-down-solid.svg" alt="">`;
+      nextBtn.disabled = currentPage === totalPages; // 마지막 페이지면 비활성화
+      nextBtn.addEventListener('click', () => {
+        if (currentPage < totalPages) {
+          currentPage++;
+          renderBoard();
+        }
+      });
+      paginationContainer.appendChild(nextBtn);
+    }
+
+    // 검색 요소 가져오기
+    const searchSelect = document.querySelector('.search-box select');
+    const searchInput = document.querySelector('.search-box input');
+    const searchBtn = document.querySelector('.search-box button');
+
+    // 검색 실행 함수
+    function handleSearch() {
+      currentSearchOption = searchSelect.value;
+      currentSearchKeyword = searchInput.value;
+      currentPage = 1; // 검색 시 항상 1페이지로 리셋
+      renderBoard();
+    }
+
+    // 이벤트 바인딩
+    searchBtn.addEventListener('click', handleSearch);
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        handleSearch();
+      }
+    });
+
+    // 글쓰기 버튼 요소 가져오기
+    const writeBtn = document.querySelector('.btn-write');
+
+    // 글쓰기 버튼 클릭 이벤트 핸들러
+    writeBtn.addEventListener('click', () => {
+      // 로컬 스토리지에서 currentUser 데이터 확인
+      const currentUser = localStorage.getItem('currentUser');
+
+      if (currentUser) {
+        // currentUser가 존재할 때만 글쓰기 페이지로 이동
+        location.href = 'inquiry-write.html';
+      } else {
+        // 존재하지 않을 때 경고창 띄우기
+        alert('로그인이 필요한 서비스입니다.');
+      }
+    });
+
+    renderBoard();
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,265 @@
+:root {
+  --border-color: 200, 200, 200;
+  --bg-color: 255, 255, 255;
+  --shadow-color: 64, 64, 64;
+  --theme-color: 0, 148, 247;
+
+  --text-color: 0, 0, 0;
+  --subtext-color: 60, 60, 60;
+}
+
+header {
+  font-family: 'Pretendard Variable', 'Pretendard', sans-serif;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+}
+
+header .nav-item.hide,
+header .submenu-item.hide,
+header .profile-btn.hide,
+header .navbar-right a.register-btn.hide,
+header .navbar-right a.login-btn.hide {
+  display: none;
+}
+
+header a {
+  color: inherit;
+  text-decoration: none;
+  transition: 0.15s ease;
+
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+header a.logo.onboard {
+  pointer-events: none;
+  user-select: none;
+}
+
+header .submenu.onboard {
+  border-bottom: 0 none;
+}
+
+header a:hover {
+  color: rgb(var(--theme-color));
+  font-weight: 500;
+  text-decoration: none;
+}
+
+header a:active {
+  filter: brightness(80%);
+}
+
+header {
+  position: fixed;
+  width: 100%;
+  isolation: isolate;
+}
+
+header .navbar {
+  background-color: rgba(var(--bg-color), 0.8);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+}
+
+header .navbar-inner,
+header .submenu-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header .logo,
+header .nav-item {
+  padding: 15px 30px;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  user-select: none;
+}
+
+header .logo>img {
+  width: 80px;
+}
+
+header .navbar-inner {
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+}
+
+header .navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+header .nav-item {
+  font-weight: 500;
+}
+
+header .submenu {
+  overflow: hidden;
+  background-color: rgba(var(--bg-color), 0.8);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(var(--border-color), 1);
+  box-sizing: border-box;
+
+  height: 0;
+  transition: height 0.25s ease;
+}
+
+header .submenu.open {
+  height: 95px;
+}
+
+header .submenu-inner {
+  display: flex;
+  position: relative;
+}
+
+header .submenu-item {
+  position: absolute;
+  top: 0px;
+  padding: 8px 0px 10px 30px;
+  font-size: 14px;
+}
+
+header .submenu-item>a,
+header .profile-dropdown>a {
+  display: block;
+  margin: 8px 0;
+}
+
+header .navbar-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+header .profile-dropdown {
+
+  position: fixed;
+
+  background-color: rgba(var(--bg-color), 0.8);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: 0px 3px 5px rgba(var(--shadow-color), 0.3);
+
+  width: 140px;
+  border-radius: 5px;
+  padding: 5px 10px 5px 10px;
+
+  text-align: right;
+  font-size: 14px;
+
+  visibility: hidden;
+  opacity: 0;
+  transition: 0.15s ease;
+}
+
+header .profile-dropdown hr {
+  display: block;
+  border: 0 none;
+  height: 1px;
+  margin-bottom: 12px;
+  background-color: rgb(var(--border-color));
+}
+
+header .profile-dropdown.open {
+  visibility: visible;
+  opacity: 1;
+}
+
+header .profile-dropdown span.profile-nickname {
+  display: block;
+  max-width: 100%;
+  padding: 6px 0 0 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+header .profile-dropdown span.profile-username {
+  display: block;
+  max-width: 100%;
+  padding: 6px 0 0 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 12px;
+  opacity: 60%;
+}
+
+header button.profile-btn {
+  border: 1px solid rgb(var(--border-color));
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  margin: 8px;
+  background-color: rgb(var(--bg-color));
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header button.profile-btn:hover {
+  filter: brightness(110%);
+}
+
+header button.profile-btn:active {
+  filter: brightness(80%);
+}
+
+header button.profile-btn img {
+  width: 16px;
+  height: 16px;
+  opacity: 30%;
+  pointer-events: none;
+  user-select: none;
+}
+
+header .navbar-right a.register-btn,
+header .navbar-right a.login-btn {
+  display: inline-block;
+  border: 1px solid rgb(var(--theme-color), 0.6);
+  color: rgb(var(--theme-color));
+  box-sizing: border-box;
+  width: 80px;
+  height: 30px;
+  border-radius: 15px;
+  margin-left: 10px;
+  font-size: 14px;
+  font-weight: 600;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+header .navbar-right a.register-btn:hover,
+header .navbar-right a.login-btn:hover {
+  filter: brightness(107%);
+  transform: scale(1.02);
+}
+
+header .navbar-right a.register-btn:active,
+header .navbar-right a.login-btn:active {
+  filter: brightness(80%);
+  transform: scale(0.97);
+}
+
+header .navbar-right a.register-btn {
+  background-color: rgb(var(--theme-color));
+  color: white;
+}

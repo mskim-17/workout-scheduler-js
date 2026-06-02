@@ -1,0 +1,8 @@
+/_temp/
+/assets/fonts/Elms_Sans/*
+!/assets/fonts/Elms_Sans/.gitkeep
+/components/footer.*
+/assets/images/common/facebook.svg
+/assets/images/common/instagram.svg
+/assets/images/common/youtube.svg
+/assets/images/common/logo-placeholder.svg

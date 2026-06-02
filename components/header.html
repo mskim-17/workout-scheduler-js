@@ -1,0 +1,36 @@
+<header class="site-header">
+  <div class="navbar">
+    <div class="navbar-inner">
+      <div class="navbar-left">
+        <a href="/index.html" class="logo"><img src="/assets/images/common/logo.svg"></a>
+        <div class="nav-item" data-category="mypage">마이페이지</div>
+        <div class="nav-item" data-category="community">커뮤니티</div>
+      </div>
+      <div class="navbar-right">
+        <a href="/auth/signup.html" class="register-btn">회원가입</a>
+        <a href="/auth/login.html" class="login-btn">로그인</a>
+        <button type="button" class="profile-btn"><img src="/assets/images/common/user-solid.svg" alt="설명"></button>
+      </div>
+    </div>
+  </div>
+  <div class="submenu">
+    <div class="submenu-inner">
+      <div class="submenu-item" data-category="mypage">
+        <a href="/mypage/home.html">홈</a>
+        <a href="/mypage/review.html">되돌아보기</a>
+        <a href="/mypage/plan.html">계획하기</a>
+      </div>
+      <div class="submenu-item" data-category="community">
+        <a href="/community/faq.html">자주 묻는 질문 (FAQ)</a>
+        <a href="/community/inquiry-list.html">문의 게시판</a>
+      </div>
+    </div>
+  </div>
+  <div class="profile-dropdown">
+    <span class="profile-nickname">{{nickname}}</span>
+    <span class="profile-username">{{username}}</span>
+    <hr>
+    <a href="/settings.html" class="profile-item" id="settings">회원정보 수정</a>
+    <a href="" class="profile-item logout-btn" id="logout">로그아웃</a>
+  </div>
+</header>

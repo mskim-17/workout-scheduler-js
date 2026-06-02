@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="/assets/css/reset.css">
+  <link rel="stylesheet" href="/assets/css/common.css">
+  <link rel="stylesheet" href="/components/header.css">
+  <link rel="stylesheet" href="/components/footer.css">
+  <style>
+    @font-face {
+      font-family: 'Elms Sans';
+      src: url('/assets/fonts/Elms_Sans/ElmsSans-VariableFont_wght.ttf') format('truetype');
+      font-weight: 100 900;
+      font-style: normal;
+    }
+
+    @font-face {
+      font-family: 'Elms Sans';
+      src: url('/assets/fonts/Elms_Sans/ElmsSans-Italic-VariableFont_wght.ttf') format('truetype');
+      font-weight: 100 900;
+      font-style: italic;
+    }
+
+    #header-container.transparent .navbar {
+      background-color: rgba(var(--bg-color), 0);
+    }
+
+    #header-container.transparent .submenu {
+      border-bottom: 0 none;
+    }
+
+    #header-container.transparent .nav-item {
+      color: white;
+    }
+
+    #header-container.transparent .logo {
+      filter: brightness(0) saturate(100%) invert(100%) sepia(100%) saturate(0%) hue-rotate(0deg) brightness(103%) contrast(103%);
+    }
+
+    main {
+      padding-top: 0;
+    }
+
+    .page-inner {
+      margin: 0 auto;
+      max-width: 1200px;
+    }
+
+    #main-page-1 {
+
+      position: relative;
+      z-index: 0;
+      min-height: 100vh;
+      box-sizing: border-box;
+
+      padding-top: 140px;
+      padding-bottom: 60px;
+      background: linear-gradient(90deg, #84fff9, #5a5acd);
+      color: rgb(var(--text-color));
+
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+
+      transition: color 0.5s ease;
+    }
+
+    #main-page-1::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.1) 100%);
+      opacity: 0;
+      transition: opacity 0.35s ease;
+      z-index: -1;
+    }
+
+    #main-page-1.transparent::before {
+      opacity: 1;
+    }
+
+    #main-page-1::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 1) 100%);
+      opacity: 1;
+      transition: opacity 0.35s ease;
+      z-index: -1;
+    }
+
+    #main-page-1.transparent::after {
+      opacity: 0;
+    }
+
+    #main-page-1 .title {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+
+      font-family: 'Elms Sans', sans-serif;
+      letter-spacing: -0.05em;
+      word-spacing: -0.2em;
+      font-size: 70px;
+      line-height: 130%;
+      font-weight: 600;
+
+      margin-bottom: 60px;
+    }
+
+    #main-page-1 .text-floating-animation-container {
+      width: 100%;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    #main-page-1 .text-floating-animation-container span {
+      display: block;
+      transform: skewX(0deg) translateY(0%);
+      transition: transform 0.8s ease;
+    }
+
+    #main-page-1 .text-floating-animation-container.hidden span {
+      transform: skewX(-15deg) translateY(100%);
+    }
+
+    #main-page-1 .hr-with-animation {
+      height: 1px;
+      width: 100%;
+      background-color: rgba(var(--text-color-invert), 0.4);
+      transition: transform 1.25s ease;
+    }
+
+    #main-page-1 .hr-with-animation.hidden {
+      transform: translateX(-100%);
+    }
+
+    #main-page-1 .subtitle {
+      font-size: 30px;
+      font-weight: 600;
+      margin-bottom: 30px;
+    }
+
+    #main-page-1 .description {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #main-page-1 .description>span {
+      display: block;
+      margin: 5px 0;
+      transition: color 0.5s ease;
+      color: rgba(var(--text-color), 0.7);
+    }
+
+    #main-page-1.transparent {
+      color: rgb(var(--text-color-invert));
+    }
+
+    #main-page-1.transparent .description>span {
+      color: rgba(var(--text-color-invert), 0.7);
+    }
+
+    #main-page-2 {
+      padding-top: 40px;
+      min-height: 600px;
+      margin-bottom: -150px;
+      /* .rotate-scroll-crop 높이에 따른 조정 */
+
+      position: relative;
+      pointer-events: none;
+    }
+
+    #main-page-2 .page-inner {
+      position: relative;
+    }
+
+    #main-page-2 .title {
+      position: absolute;
+      z-index: 5000;
+      left: 50px;
+    }
+
+    #main-page-2 .title .text-appear-animation-container {
+      font-size: 50px;
+      line-height: 150%;
+      font-weight: 700;
+
+      white-space: nowrap;
+      overflow-x: hidden;
+      width: auto;
+
+      transition: width 1s ease;
+    }
+
+    #main-page-2 .title .text-appear-animation-container.hidden {
+      width: 0;
+    }
+
+    #main-page-2 .rotate-scroll-crop {
+      /* border: 1px solid red; */
+      padding-top: 120px;
+      width: 100%;
+      height: 1000px;
+      overflow: hidden;
+
+      position: relative;
+    }
+
+    #main-page-2 .rotate-scroll {
+      position: absolute;
+      left: 50%;
+    }
+
+    #main-page-2 .sub-page-topleft {
+      position: absolute;
+      background-color: #00f;
+      top: 900px;
+      left: 50%;
+      transform: translate(-900px, -900px);
+    }
+
+    #main-page-2 .sub-page-wrapper {
+
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.8s ease;
+
+      width: 1800px;
+      height: 1800px;
+      background: radial-gradient(#000, #000 0.1%, #0000 0.2%, #00f0 0.9%, #00f 1%, #00f0 1.1%);
+    }
+
+    #main-page-2 .circle {
+
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 0);
+
+      z-index: -9999;
+      width: 1800px;
+      height: 1800px;
+
+      background: radial-gradient(#000, #000 0.1%, #0000 0.2%, #f000 0.9%, #f00 1%, #f000 1.1%);
+      border-radius: 50%;
+      box-sizing: border-box;
+      border: 1px solid rgba(var(--border-color), 0.6);
+    }
+
+    #main-page-2 .sub-page {
+
+      position: absolute;
+      left: 50%;
+      transform: translate(-50%, 0);
+      width: 1800px;
+      height: 1800px;
+      background: radial-gradient(#000, #000 0.1%, #0000 0.2%, #00f0 0.9%, #00f 1%, #00f0 1.1%);
+
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+    }
+
+    #main-page-2 .sub-page-wrapper.inactive-left {
+      transform: rotate(-45deg);
+      opacity: 0;
+    }
+
+    #main-page-2 .sub-page-wrapper.inactive-right {
+      transform: rotate(45deg);
+      opacity: 0;
+    }
+
+    #main-page-2 .sub-page .sub-page-no {
+
+      margin-top: -75px;
+
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 8px solid rgb(var(--bg-color));
+      background-color: rgb(var(--theme-color));
+
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      color: white;
+      font-family: 'Elms Sans', sans-serif;
+      font-weight: 700;
+      font-size: 20px;
+    }
+
+    #main-page-2 .sub-page .sub-page-dot {
+      width: 8px;
+      height: 8px;
+      border: 8px solid rgb(var(--bg-color));
+      border-radius: 50%;
+      background-color: rgb(var(--theme-color));
+    }
+
+    #main-page-2 .sub-page .sub-page-vertical-line {
+      width: 1px;
+      height: 40px;
+      margin: 5px 0;
+      background-color: rgba(var(--border-color), 0.6);
+    }
+
+    #main-page-2 .sub-page .sub-page-title {
+      margin: 8px 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    #main-page-2 .sub-page .sub-page-description {
+      margin: 16px 0;
+      font-size: 16px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    #main-page-2 .sub-page .sub-page-image {
+      margin: 8px 0;
+      width: 640px;
+      height: 360px;
+      border-radius: 10px;
+      /* box-shadow: 0px 3px 8px rgba(var(--shadow-color), 0.6); */
+
+      background-repeat: none;
+      background-position: center;
+      background-size: cover;
+    }
+
+    #main-page-2 #subpage-no-1 .sub-page-image {
+      background-image: url('/assets/images/index/subpage-01.png');
+    }
+
+    #main-page-2 #subpage-no-2 .sub-page-image {
+      background-image: url('/assets/images/index/subpage-02.png');
+    }
+
+    #main-page-2 #subpage-no-3 .sub-page-image {
+      background-image: url('/assets/images/index/subpage-03.png');
+    }
+
+    #footer-container {
+      position: relative;
+      z-index: 9999;
+    }
+
+    @media (max-width: 1000px) {
+      #main-page-2 .title {
+        position: relative;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header-container"></div>
+  <main>
+    <section id="main-page-1">
+      <div class="title">
+        <div class="text-floating-animation-container hidden">
+          <span>Plan Smart. </span>
+        </div>
+        <div class="hr-with-animation hidden"></div>
+        <div class="text-floating-animation-container hidden">
+          <span>Train Strong. </span>
+        </div>
+        <div class="hr-with-animation hidden"></div>
+        <div class="text-floating-animation-container hidden">
+          <span>Live Free.</span>
+        </div>
+        <div class="hr-with-animation hidden"></div>
+      </div>
+      <div class="subtitle">
+        작은 결심에서 시작되는 변화
+      </div>
+      <div class="description">
+        <span>헬스를 시작하려는 분들을 위한 든든한 출발점,</span>
+        <span><span class='logoText'>DayFit</span>에서 당신만의 여정을 설계하세요.</span>
+      </div>
+    </section>
+    <section id="main-page-2">
+      <div>
+        <div class="title">
+          <!-- <div class="text-appear-animation-container hidden">
+            <span>언제든! 어디서든!</span>
+          </div>
+          <div class="text-appear-animation-container hidden">
+            <span>운동, 일상이 되는 곳</span>
+          </div>
+        </div> -->
+        </div>
+        <div class="rotate-scroll-crop">
+          <div class="rotate-scroll">
+            <div class="circle"></div>
+            <div class="sub-page-topleft">
+              <div class="sub-page-wrapper" data-page-no="1" id="subpage-no-1">
+                <div class="sub-page">
+                  <div class="sub-page-no">1</div>
+                  <div class="sub-page-dot"></div>
+                  <div class="sub-page-vertical-line"></div>
+                  <div class="sub-page-title">스마트 플래너 & 캘린더</div>
+                  <div class="sub-page-description">오늘 타겟할 부위와 세부 운동을 고르고 달력에 슥- 저장하면 끝. <br />
+                    복잡한 루틴 짜기부터 한 달간의 운동 흐름까지 한눈에 확인하고 체계적으로 관리하세요.</div>
+                  <div class="sub-page-image"></div>
+                </div>
+              </div>
+              <div class="sub-page-wrapper inactive-right" data-page-no="3" id="subpage-no-3">
+                <div class="sub-page">
+                  <div class="sub-page-no">3</div>
+                  <div class="sub-page-dot"></div>
+                  <div class="sub-page-vertical-line"></div>
+                  <div class="sub-page-title">루틴 전용 운동 타이머</div>
+                  <div class="sub-page-description">수축과 이완, 그리고 휴식까지. <br />
+                    루즈해질 틈 없는 실시간 인터벌 및 세트 타이머 기능으로 <br />오직 내 몸과 자극에만
+                    온전히 몰입하는 완벽한 세션을 완성하세요.</div>
+                  <div class="sub-page-image"></div>
+                </div>
+              </div>
+              <div class="sub-page-wrapper inactive-right" data-page-no="2" id="subpage-no-2">
+                <div class="sub-page">
+                  <div class="sub-page-no">2</div>
+                  <div class="sub-page-dot"></div>
+                  <div class="sub-page-vertical-line"></div>
+                  <div class="sub-page-title">원클릭 유튜브 가이드</div>
+                  <div class="sub-page-description">더 이상 검증되지 않은 자세로 헤매지 마세요. <br />
+                    선택한 세부 운동에 딱 맞는 맞춤형 유튜브 가이드 영상이 바로 연동되어 <br />흐름 끊김 없이
+                    안전하게 운동할 수 있습니다.</div>
+                  <div class="sub-page-image"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </section>
+    <!-- <div id="main-page-3">
+      <div class="page-inner">
+        <div class="text-appear-animation-container">
+          <span>헬스, 라이프, 인사이트</span>
+        </div>
+        <div class="text-appear-animation-container">
+          <span>놓치지 마세요!</span>
+        </div>
+        <button class="primary-button signup-button with-theme-color">시작하기</button>
+      </div>
+    </div> -->
+  </main>
+  <div id="footer-container"></div>
+  <script type="module">
+    import { mountHeader } from "/components/header.js";
+    // import { mountFooter } from "/components/footer.js";
+    const headerContainer = document.getElementById('header-container');
+    // const footerContainer = document.getElementById('footer-container');
+
+    (async () => {
+
+      await mountHeader(headerContainer);
+      // await mountFooter(footerContainer);
+
+      let submenuTimer;
+
+      const headerNavBar = document.querySelector('#header-container .navbar');
+      const headerSubmenu = document.querySelector('#header-container .submenu');
+      const headerNavItems = document.querySelectorAll('#header-container .nav-item');
+      const mainPage1 = document.querySelector('#main-page-1');
+
+      headerNavBar.style.transition = '0.5s ease';
+
+      const updateHeaderColor = () => {
+        const noNavHover = Array.from(headerNavItems).every(item => !item.matches(':hover'));
+        const noSubmenuHover = headerSubmenu && !headerSubmenu.matches(':hover');
+
+        if (window.scrollY === 0 && noNavHover && noSubmenuHover) {
+          clearTimeout(submenuTimer);
+          submenuTimer = setTimeout(() => {
+            headerContainer.classList.add('transparent');
+            mainPage1.classList.add('transparent');
+          }, 80);
+        } else {
+          clearTimeout(submenuTimer);
+          headerContainer.classList.remove('transparent');
+          mainPage1.classList.remove('transparent');
+        }
+      };
+      updateHeaderColor();
+
+      window.addEventListener('scroll', updateHeaderColor);
+      headerSubmenu.addEventListener('mouseenter', updateHeaderColor);
+      headerSubmenu.addEventListener('mouseleave', updateHeaderColor);
+      headerNavItems.forEach(element => {
+        element.addEventListener('mouseenter', updateHeaderColor);
+        element.addEventListener('mouseleave', updateHeaderColor);
+      });
+    })();
+  </script>
+
+  <script>
+    const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+    const floatingElements = document.querySelectorAll('#main-page-1 .text-floating-animation-container');
+    const hrElements = document.querySelectorAll('#main-page-1 .hr-with-animation');
+
+    const magePage1 = document.querySelector('#main-page-1');
+    const magePage2 = document.querySelector('#main-page-2');
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      for (const elem of floatingElements) {
+        elem.classList.remove('hidden');
+        await sleep(150);
+      }
+    });
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      for (const elem of hrElements) {
+        elem.classList.remove('hidden');
+        await sleep(200);
+      }
+    });
+
+    const textAnimationContainers = document.querySelectorAll('#main-page-2 .title .text-appear-animation-container');
+
+    textAnimationContainers.forEach(element => {
+      element.dataset.width = element.scrollWidth;
+      element.classList.add('hidden');
+    });
+
+    let textAnimationLock = false;
+
+    async function checkVisible() {
+      for (const element of textAnimationContainers) {
+        if (textAnimationLock) return;
+        const rect = element.getBoundingClientRect();
+        const inView = rect.top < window.innerHeight;
+        if (inView && element.classList.contains('hidden')) {
+          textAnimationLock = true;
+          element.style.width = `${element.dataset.width}px`;
+          element.classList.remove('hidden');
+          await sleep(600);
+          textAnimationLock = false;
+        }
+      }
+    }
+
+    window.addEventListener('scroll', checkVisible);
+    window.addEventListener('resize', checkVisible);
+
+    let lastDirection = null;
+    let scrollCount = 0;
+    let isAutoScrolling = false;
+    let currentPage = 1;
+    let currentSubPage = 1;
+
+    function subPage2Scroll(pageNo) {
+      const pages = document.querySelectorAll('#main-page-2 .sub-page-wrapper');
+      for (const page of pages) {
+        const eventPageNo = Number(page.dataset.pageNo);
+        page.classList.toggle('inactive-left', (pageNo - eventPageNo + 3) % 3 == 1);
+        page.classList.toggle('inactive-right', (pageNo - eventPageNo + 3) % 3 == 2);
+      }
+    }
+
+    window.addEventListener('wheel', (e) => {
+      if (isAutoScrolling) {
+        e.preventDefault();
+        return;
+      }
+
+      let direction = e.deltaY > 0 ? 'down' : 'up';
+      if (direction !== lastDirection) {
+        scrollCount = 0;
+        lastDirection = direction;
+      }
+      scrollCount++;
+
+      if (scrollCount >= 2) {
+        isAutoScrolling = true;
+
+        if (direction === 'down') {
+          if (currentPage === 2) {
+            currentSubPage = ((++currentSubPage - 1) % 3) + 1;
+            subPage2Scroll(currentSubPage);
+          } else {
+            magePage2.scrollIntoView({ behavior: 'smooth' });
+            currentPage = 2;
+          }
+        } else {
+          if (currentPage === 2 && currentSubPage > 1) {
+            currentSubPage--;
+            subPage2Scroll(currentSubPage);
+          } else {
+            magePage1.scrollIntoView({ behavior: 'smooth' });
+            currentPage = 1;
+          }
+        }
+        setTimeout(() => {
+          isAutoScrolling = false;
+          scrollCount = 0;
+        }, 1000);
+
+        scrollCount = 0; // 실행 후 카운트 초기화
+      }
+
+      e.preventDefault();
+    }, { passive: false });
+  </script>
+</body>
+
+</html>

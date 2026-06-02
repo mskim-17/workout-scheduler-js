@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document</title>
+  <link rel="stylesheet" href="/assets/css/reset.css">
+  <link rel="stylesheet" href="/components/header.css">
+  <link rel="stylesheet" href="/assets/css/common.css">
+  <link rel="stylesheet" href="/assets/css/pages/mypage/home.css">
+</head>
+
+<body>
+  <div id="header-container"></div>
+  <main>
+    <div class="container">
+      <div class="timer-box">
+        <div class="timer">
+          <div class="progress-circle">
+            <svg viewBox="0 0 100 100">
+              <circle class="bg" cx="50" cy="50" r="45"></circle>
+              <circle class="progress" cx="50" cy="50" r="45"></circle>
+            </svg>
+          </div>
+          <div class="time-unit">
+            <button class="arrow up-arrow" id="min-up"><img src="/assets/images/common/angle-down-solid.svg"
+                alt=""></button>
+            <span class="minutes" id="min-display">00</span>
+            <button class="arrow down-arrow" id="min-down"><img src="/assets/images/common/angle-down-solid.svg"
+                alt=""></button>
+          </div>
+
+          <div class="colon">:</div>
+
+          <div class="time-unit">
+            <button class="arrow up-arrow" id="sec-up"><img src="/assets/images/common/angle-down-solid.svg"
+                alt=""></button>
+            <span class="seconds" id="sec-display">00</span>
+            <button class="arrow down-arrow" id="sec-down"><img src="/assets/images/common/angle-down-solid.svg"
+                alt=""></button>
+          </div>
+        </div>
+
+        <div class="button-group">
+          <div class="button-subgroup">
+            <button class="reset" id="reset-btn">초기화</button>
+            <button class="start" id="start-btn">시작하기</button>
+          </div>
+          <div class="button-subgroup" id="timer-active">
+            <button class="stop" id="stop-btn">삭제</button>
+            <button class="pause" id="pause-btn">일시정지</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="plane-box">
+        <h3 class="main-title"></h3>
+        <p class="sub-title"></p>
+        <button class="button"></button>
+      </div>
+    </div>
+  </main>
+  <div id="footer-container"></div>
+  <script>
+    // ==========================================
+    // 1. 타이머 관련 기존 로직 (유지)
+    // ==========================================
+    const minDisplay = document.getElementById("min-display");
+    const secDisplay = document.getElementById("sec-display");
+    const btnSubgroupTimerActive = document.querySelector(".button-subgroup#timer-active");
+    const startBtn = document.getElementById("start-btn");
+    const pauseBtn = document.getElementById("pause-btn");
+    const stopBtn = document.getElementById("stop-btn");
+    const resetBtn = document.getElementById("reset-btn");
+
+    const minUp = document.getElementById("min-up");
+    const minDown = document.getElementById("min-down");
+    const secUp = document.getElementById("sec-up");
+    const secDown = document.getElementById("sec-down");
+
+    let countdown;
+    let totalSeconds = 0;
+    const maxTotalSeconds = 1800; // 30분
+    let tmpTime;
+    let isRunning = false;
+
+    function updateDisplay() {
+      const min = Math.floor(totalSeconds / 60);
+      const sec = totalSeconds % 60;
+      minDisplay.textContent = String(min).padStart(2, "0");
+      secDisplay.textContent = String(sec).padStart(2, "0");
+    }
+
+    const updateUpDownButtonStatus = () => {
+      minDown.disabled = (isRunning || totalSeconds < 60);
+      secDown.disabled = (isRunning || totalSeconds < 10);
+      minUp.disabled = (isRunning || totalSeconds == maxTotalSeconds);
+      secUp.disabled = (isRunning || totalSeconds == maxTotalSeconds);
+    }
+
+    const toggleButtonStatus = () => {
+      startBtn.disabled = (totalSeconds == 0);
+      resetBtn.disabled = (totalSeconds == 0);
+    }
+
+    function updateCircleProgress(elapsed, total) {
+
+      const circle = document.querySelector('.progress');
+      const circumference = 2 * Math.PI * 45;
+      const progress = ((total == 0) ? 1 : elapsed / total) * circumference;
+      circle.style.strokeDashoffset = circumference - progress;
+      circle.style.opacity = isRunning ? 1 : 0;
+
+    }
+
+    function updateTimerUI() {
+      updateDisplay();
+      updateUpDownButtonStatus();
+      toggleButtonStatus();
+      updateCircleProgress(totalSeconds, tmpTime, isRunning);
+    }
+
+    minUp.addEventListener("click", () => {
+      if (!isRunning) {
+        totalSeconds += 60;
+        totalSeconds = Math.min(maxTotalSeconds, totalSeconds);
+        tmpTime = totalSeconds;
+        updateTimerUI();
+      }
+    });
+
+    minDown.addEventListener("click", () => {
+      if (!isRunning && totalSeconds >= 60) {
+        totalSeconds -= 60;
+        tmpTime = totalSeconds;
+        updateTimerUI();
+      }
+    });
+
+    secUp.addEventListener("click", () => {
+      if (!isRunning) {
+        totalSeconds += 10;
+        tmpTime = totalSeconds;
+        updateTimerUI();
+      }
+    });
+
+    secDown.addEventListener("click", () => {
+      if (!isRunning && totalSeconds > 0) {
+        totalSeconds -= 10;
+        tmpTime = totalSeconds;
+        updateTimerUI();
+      }
+    });
+
+    function buttonGroupToggle(reset) {
+      btnSubgroupTimerActive.style.display = reset ? 'none' : 'flex';
+      if (reset) pauseBtn.textContent = "일시정지";
+    }
+
+    function startTimer() {
+      isRunning = true;
+      updateTimerUI();
+      buttonGroupToggle(false);
+      pauseBtn.style.display = 'block';
+
+      // 1초 더 세는 것을 막음
+      totalSeconds--;
+      updateTimerUI();
+
+      countdown = setInterval(() => {
+        if (totalSeconds <= 0) {
+          clearInterval(countdown);
+          isRunning = false;
+          alert("타이머가 종료되었습니다!");
+          totalSeconds = tmpTime;
+          updateTimerUI();
+          buttonGroupToggle(true);
+          return;
+        }
+        totalSeconds--;
+        updateTimerUI();
+      }, 1000);
+    }
+
+    startBtn.addEventListener("click", () => {
+      if (isRunning) return;
+      if (totalSeconds === 0) {
+        alert("시간을 설정해 주세요!");
+        return;
+      }
+      startTimer();
+
+    });
+
+    pauseBtn.addEventListener("click", () => {
+      if (!isRunning) {
+        startTimer();
+        pauseBtn.textContent = "일시정지";
+      } else {
+        clearInterval(countdown);
+        isRunning = false;
+        pauseBtn.textContent = "계속";
+      }
+    });
+
+    stopBtn.addEventListener("click", () => {
+      clearInterval(countdown);
+      isRunning = false;
+      totalSeconds = tmpTime;
+      updateTimerUI();
+      buttonGroupToggle(true);
+    });
+
+    resetBtn.addEventListener("click", () => {
+      clearInterval(countdown);
+      isRunning = false;
+      totalSeconds = 0;
+      updateTimerUI();
+      buttonGroupToggle(true);
+    });
+
+
+    // ==========================================
+    // 2. 로그인 유저 연동 및 데이터 처리 로직 (수정/개편)
+    // ==========================================
+    const todayDateStr = new Date().toLocaleDateString('ko-KR', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replace(/\.\s?/g, '-').replace(/-$/, '');
+
+    let userMap = {};       // 로컬 스토리지의 전체 유저 맵
+    let currentUserId = ""; // 현재 로그인한 유저 ID
+    let currentUserData = null; // 현재 유저의 단일 객체 (newUser 구조)
+
+    // 현재 로그인한 유저의 정보를 LocalStorage에서 직접 가져오는 함수
+    function loadUserData() {
+      currentUserId = localStorage.getItem('currentUser');
+      const storedUsers = localStorage.getItem('users');
+
+      // 로그인 여부 확인 및 예외 처리
+      if (!currentUserId || !storedUsers) {
+        alert("로그인이 필요하거나 등록된 유저가 없습니다. 로그인 페이지로 이동합니다.");
+        window.location.href = "../auth/login.html";
+        return;
+      }
+
+      userMap = JSON.parse(storedUsers);
+      currentUserData = userMap[currentUserId];
+
+      if (!currentUserData) {
+        alert("유저 정보를 찾을 수 없습니다.");
+        return;
+      }
+
+      console.log(`로그인 유저 [${currentUserId}] 데이터 로드 성공`);
+
+      // UI를 그리는 함수로 유저 객체 전달
+      useData(currentUserData);
+    }
+
+    // 변경된 데이터를 다시 LocalStorage에 저장하는 공통 함수
+    function saveUserData() {
+      if (currentUserId && currentUserData) {
+        userMap[currentUserId] = currentUserData;
+        localStorage.setItem("users", JSON.stringify(userMap));
+        console.log("로컬 스토리지에 변경사항 저장 완료");
+      }
+    }
+
+    // 데이터를 받아서 화면을 렌더링하고 상태를 제어하는 함수
+    function useData(userData) {
+      const mainTitle = document.querySelector(".main-title");
+      const subTitle = document.querySelector(".sub-title");
+      const button = document.querySelector(".button");
+      const planeBox = document.querySelector(".plane-box");
+
+      // 오늘 날짜 데이터 구조 초기화
+      if (!userData.plans) userData.plans = {};
+      if (!userData.plans[todayDateStr]) {
+        userData.plans[todayDateStr] = { "memo": "", "status": "no plan", "program": {} };
+        saveUserData(); // 구조 생성 시 즉시 저장
+      }
+
+      const dayPlan = userData.plans[todayDateStr];
+      const currentStatus = dayPlan.status;
+
+      // 버튼 기준점(Anchor) 초기화 복제
+      const newButton = button.cloneNode(true);
+      button.parentNode.replaceChild(newButton, button);
+
+      // [공통 루틴] 운동 계획 리스트 렌더링 함수
+      function renderHomeWorkoutList(showCheckbox) {
+        const prevList = planeBox.querySelector(".home-exercise-list");
+        if (prevList) prevList.remove();
+
+        if (!dayPlan.program || Object.keys(dayPlan.program).length === 0) return;
+
+        let listHtml = `<div class="home-exercise-list" style="margin-top: 20px; margin-bottom: 20px; text-align: left; background: #f5f5f5; padding: 15px; border-radius: 8px; width: 100%; box-sizing: border-box;">`;
+
+        for (const bodyPart in dayPlan.program) {
+          // 부위 명칭별 특성 조건 설정 ("맨몸 운동", "유산소" 등 체크)
+          const isBodyweight = bodyPart === "맨몸 운동";
+          const isCardio = bodyPart === "유산소";
+          const isNoKg = isBodyweight || isCardio;
+
+
+          dayPlan.program[bodyPart].forEach((item, workoutIdx) => {
+            const unitText = isCardio ? "분" : (item.workout == "플랭크") ? "초" : "회";
+            const setLength = item.set.length;
+            listHtml += `
+          <div class="home-exercise-item" style="margin-bottom: 15px;" data-bodypart="${bodyPart}" data-workoutidx="${workoutIdx}">
+            <div style="font-weight: bold; font-size: 16px; margin-bottom: 8px; color: #333;">
+              <span style="color: #7b68ee; margin-right: 5px;">■</span>${item.workout} <span style="font-weight: normal; font-size: 13px; color: #666;">${setLength}세트</span>
+            </div>
+            <ul style="list-style: none; padding-left: 20px; margin: 0;">
+        `;
+
+            item.set.forEach((setInfo, setIdx) => {
+              const setNum = setIdx + 1;
+              const kgs = setInfo.kgs !== null && setInfo.kgs !== "" ? setInfo.kgs : "--";
+              const rep = setInfo.rep !== null && setInfo.rep !== "" ? setInfo.rep : "--";
+              const checkedAttr = setInfo.isCompleted ? "checked" : "";
+
+              listHtml += `
+            <li style="height: 22px; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; color: #444;" data-setidx="${setIdx}">
+              ${showCheckbox ? `<input type="checkbox" class="home-set-checkbox" ${checkedAttr} style="width:16px; height:16px; cursor:pointer;">` : ''}
+              <span style="font-weight: bold; color: #7b68ee;">#${setNum}</span>
+              ${isNoKg ? '' : `<span>${kgs}kg</span>`}
+              <span>${rep}${unitText}</span>
+            </li>
+          `;
+            });
+
+            listHtml += `</ul></div>`;
+          });
+        }
+        listHtml += `</div>`;
+
+        newButton.insertAdjacentHTML('beforebegin', listHtml);
+
+        // 체크박스 클릭 핸들러 (실시간 반영 및 로컬스토리지 영구 저장)
+        if (showCheckbox) {
+          const createdList = planeBox.querySelector(".home-exercise-list");
+          createdList.addEventListener("change", (e) => {
+            if (e.target.classList.contains("home-set-checkbox")) {
+              const setItem = e.target.closest("li");
+              const exerciseItem = e.target.closest(".home-exercise-item");
+
+              const bodyPart = exerciseItem.dataset.bodypart;
+              const workoutIdx = parseInt(exerciseItem.dataset.workoutidx);
+              const setIdx = parseInt(setItem.dataset.setidx);
+
+              // 1. 메모리상 데이터 변경
+              userData.plans[todayDateStr].program[bodyPart][workoutIdx].set[setIdx].isCompleted = e.target.checked;
+
+              // 2. 변경 내용을 'users' 로컬스토리지에 영구 저장
+              saveUserData();
+            }
+          });
+        }
+      }
+
+      // 1. 계획 없음 (no plan)
+      if (currentStatus == "no plan") {
+        mainTitle.innerHTML = `오늘의 운동 계획이 아직 없어요!`;
+        subTitle.innerText = `계획하기 페이지에서 오늘 운동 계획을 설정해봅시다!`;
+        newButton.innerText = `계획하러 가기`;
+        newButton.classList.add(".with-theme-color");
+        newButton.addEventListener("click", () => {
+          location.href = "plan.html";
+        });
+      }
+
+      // 2. 운동 시작 전 (not started)
+      else if (currentStatus == "not started") {
+        mainTitle.innerHTML = `계획 확인`;
+        subTitle.innerText = `계획하기 페이지에서 오늘 운동 계획을 수정할 수 있습니다.`;
+
+        newButton.innerText = `운동 시작하기`;
+        newButton.classList.add(".with-theme-color");
+        newButton.style.width = "auto";
+        newButton.style.flex = "1";
+
+        renderHomeWorkoutList(false);
+
+        // 계획 수정하기 버튼 생성
+        const editBtn = document.createElement("button");
+        editBtn.className = "button btn-edit-plan";
+        editBtn.innerText = "계획 수정하기";
+        editBtn.addEventListener("click", () => {
+          location.href = "plan.html";
+        });
+
+        editBtn.style.background = "#e0e0e0";
+        editBtn.style.color = "#333";
+        editBtn.style.border = "none";
+        editBtn.style.padding = "10px 20px";
+        editBtn.style.borderRadius = "20px";
+        editBtn.style.fontWeight = "bold";
+        editBtn.style.cursor = "pointer";
+        editBtn.style.flex = "1";
+
+        const btnContainer = document.createElement("div");
+        btnContainer.className = "home-btn-group";
+        btnContainer.style.display = "flex";
+        btnContainer.style.gap = "10px";
+        btnContainer.style.width = "100%";
+        btnContainer.style.marginTop = "15px";
+
+        newButton.parentNode.insertBefore(btnContainer, newButton);
+        btnContainer.appendChild(editBtn);
+        btnContainer.appendChild(newButton);
+
+        // 운동 시작하기 클릭 시 상태 전환 및 저장
+        newButton.addEventListener("click", () => {
+          btnContainer.after(newButton);
+          btnContainer.remove();
+
+          // 1. 상태 변경
+          userData.plans[todayDateStr].status = "started";
+          // 2. 로컬 스토리지 저장
+          saveUserData();
+          // 3. 다시 그리기
+          useData(userData);
+        });
+      }
+
+      // 3. 운동 진행 중 (started)
+      else if (currentStatus == "started") {
+        mainTitle.innerHTML = `운동 진행 중`;
+        subTitle.innerText = `수행한 세트의 체크박스를 선택하여 오운완을 기록하세요!`;
+        newButton.innerText = `운동 완료하기`;
+        newButton.style.background = "#ff5252";
+        newButton.style.color = "#fff";
+
+        renderHomeWorkoutList(true);
+
+        // 운동 완료 버튼 클릭 시 상태 전환 및 저장
+        newButton.addEventListener("click", () => {
+          if (confirm("오늘 운동을 여기서 모두 완료 처리하시겠습니까?")) {
+            // 1. 상태 변경
+            userData.plans[todayDateStr].status = "finished";
+            // 2. 로컬 스토리지 저장
+            saveUserData();
+            // 3. 다시 그리기
+            useData(userData);
+          }
+        });
+      }
+
+      // 4. 운동 완료 (finished)
+      else if (currentStatus == "finished") {
+        const prevList = planeBox.querySelector(".home-exercise-list");
+        if (prevList) prevList.remove();
+
+        mainTitle.innerHTML = `오늘도 고생하셨습니다.`;
+        subTitle.innerText = `되돌아보기 페이지에서 오늘의 활동을 점검할 수 있습니다.`;
+        newButton.innerText = `되돌아보기`;
+        newButton.style.background = "#7b68ee";
+        newButton.style.color = "#fff";
+        newButton.addEventListener("click", () => {
+          location.href = "review.html";
+        });
+      }
+    }
+
+    // 초기 실행문
+    updateUpDownButtonStatus();
+    buttonGroupToggle(true);
+    toggleButtonStatus();
+    updateCircleProgress(1, 1, false);
+    loadUserData();
+  </script>
+  <script type="module">
+    import { mountHeader } from "/components/header.js";
+    const headerContainer = document.getElementById('header-container');
+    
+    await mountHeader(headerContainer);
+  </script>
+</body>
+
+</html>

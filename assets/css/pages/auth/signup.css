@@ -1,0 +1,70 @@
+main {
+  padding-top: 60px;
+}
+
+.auth-box {
+
+  width: 100%;
+  max-width: 400px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+
+  margin: 40px auto 0;
+  box-sizing: border-box;
+
+}
+
+.auth-box h1 {
+  font-size: 32px;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 5px 0;
+  position: relative;
+}
+
+.input-group label {
+  font-size: 16px;
+  padding: 4px 0;
+  display: block;
+}
+
+.input-group input {
+
+  height: 44px;
+
+  padding: 0 12px;
+  box-sizing: border-box;
+  border: 1px solid rgb(var(--border-color));
+  border-radius: 6px;
+
+  font-size: 16px;
+}
+
+.error-msg {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+#regist {
+  height: 48px;
+  font-size: 16px;
+  border-radius: 24px;
+}
+
+.auth-link {
+  margin-top: 10px;
+  color: rgb(var(--smalltext-color));
+  font-size: 14px;
+}
+
+.auth-link>a {
+  color: inherit;
+}

@@ -1,0 +1,211 @@
+/* 메인 레이아웃 */
+.container {
+  display: flex;
+  gap: 40px;
+  max-width: 1000px;
+  margin: 40px auto;
+  align-items: flex-start;
+}
+
+.left-box {
+  flex: 0 0 350px;
+  /* 좌측 달력 정렬 느낌과 완벽히 일치하도록 너비 기준 정돈 */
+}
+
+.right-box {
+  flex: 1;
+  /* 우측 영역 반응형 스케일 맞춤 */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 우측 콘텐츠 스타일링 */
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* 오늘 날짜 미완료 안내 띠 */
+.today-warning {
+  background-color: #fee2e2;
+  color: #ef4444;
+  padding: 12px 20px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 15px;
+  border: 1px solid #fca5a5;
+}
+
+.list-container {
+  position: relative;
+  background-color: #f7f7f7;
+  border-radius: 12px;
+  /* 첫 번째 파일의 우측 list 상자 둥글기와 일치 */
+  padding: 25px 130px 25px 25px;
+  min-height: 150px;
+}
+
+/* 운동 종목 항목 */
+.workout-group {
+  margin-bottom: 20px;
+}
+
+.workout-group:last-child {
+  margin-bottom: 0;
+}
+
+.workout-header {
+  display: flex;
+  align-items: center;
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  border-bottom: 1px solid #e6e6e6;
+  /* 경계선 색상 느낌 통일 */
+  padding-bottom: 8px;
+}
+
+/* 상위 아이콘 상태 (X 또는 네모) */
+.status-icon {
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+.status-icon.none {
+  color: #ff5a60;
+  /* 포인트 레드 컬러 통일 */
+}
+
+.status-icon.partial {
+  color: #3b82f6;
+}
+
+/* 세트 리스트 스타일 */
+.set-list {
+  padding-left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.set-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  height: 22px;
+}
+
+/* 체크박스 수정 불가(Read-only) 스타일링 */
+.set-item input[type="checkbox"] {
+  width: 16px;
+  /* 크기 스타일 맞춤 */
+  height: 16px;
+  cursor: default;
+  pointer-events: none;
+  accent-color: #7b68ee;
+  /* 첫 번째 파일 포인트 테마 컬러와 연동 */
+}
+
+.set-no {
+  color: #7b68ee;
+  font-weight: 700;
+}
+/* 원형 프로그레스 바 (SVG) */
+.progress-container {
+  position: absolute;
+  right: 25px;
+  bottom: 25px;
+  width: 80px;
+  height: 80px;
+  display: block;
+}
+
+.progress-svg {
+  transform: rotate(-90deg);
+}
+
+.progress-bg {
+  fill: none;
+  stroke: #e6e6e6;
+  stroke-width: 8;
+}
+
+.progress-bar {
+  fill: none;
+  stroke: transparent;
+  stroke-width: 8;
+  stroke-dasharray: 226;
+  stroke-dashoffset: 226;
+  transition: stroke 0.3s ease, stroke-dashoffset 0.3s ease;
+}
+
+.progress-percentage {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  text-align: center;
+}
+
+.progress-percentage .value {
+  display: inline-block;
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.progress-percentage .percent {
+  display: inline-block;
+  font-weight: 600;
+  transform: translateY(-1px);
+}
+
+/* 메모 영역 */
+.memo-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.memo-section label {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.memo-section textarea {
+  width: 100%;
+  height: 100px;
+  padding: 15px;
+  box-sizing: border-box;
+  border: none;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  font-size: 16px;
+  resize: none;
+}
+
+/* 저장 버튼 */
+.save-btn {
+  align-self: flex-end;
+  border-radius: 22px;
+  width: 125px;
+  height: 44px;
+  font-size: 16px;
+}
+
+.no-data {
+  color: #555;
+  line-height: 1.6;
+}
+
+.no-plan-link {
+  color: rgb(var(--theme-color));
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+}

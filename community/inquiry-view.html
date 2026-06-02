@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>상세보기</title>
+  <link rel="stylesheet" href="/assets/css/reset.css">
+  <link rel="stylesheet" href="/assets/css/common.css">
+  <link rel="stylesheet" href="/components/header.css">
+  <style>
+    .post-container {
+      max-width: 1000px;
+      margin: 60px auto 0;
+      padding: 0 40px;
+      box-sizing: border-box;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .post-header {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .back-to-list a {
+      display: flex;
+      align-items: center;
+      color: rgb(var(--theme-color));
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .back-to-list a:hover {
+      text-decoration: underline;
+    }
+
+    .back-to-list img {
+      pointer-events: none;
+      width: 16px;
+      height: 16px;
+      transform: rotate(90deg);
+      filter: brightness(0) saturate(100%) invert(43%) sepia(82%) saturate(3067%) hue-rotate(180deg) brightness(100%) contrast(101%);
+    }
+
+    .back-to-list .qna-text {
+      font-family: 'Elms Sans', sans-serif;
+      letter-spacing: -0.05em;
+      word-spacing: -0.2em;
+      padding-right: 0.05em;
+      font-weight: 600;
+    }
+
+    .post-header h1 {
+      font-size: 32px;
+      line-height: 1.4;
+      font-weight: 500;
+      margin-top: 30px;
+      margin-bottom: 10px;
+    }
+
+    .post-info {
+      font-size: 13px;
+      margin: 3px 0;
+      font-weight: 400;
+      opacity: 80%;
+    }
+
+    .post-info span {
+      display: block;
+      line-height: 20px;
+    }
+
+    .answer-header {
+      font-size: 13px;
+      opacity: 70%;
+    }
+
+    .post-header .info-name,
+    .answer-header .info-name {
+      display: inline;
+      font-weight: 700;
+    }
+
+    .post-header .divider {
+      display: inline-block;
+      margin: 0 10px;
+      opacity: 40%;
+
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .post-header .sub-info {
+      display: inline;
+      font-size: 14px;
+      opacity: 40%;
+    }
+
+    hr {
+      width: 100%;
+
+      border: none;
+      border-top: 1px solid rgb(var(--border-color));
+    }
+
+    hr.hr2 {
+      border-top: 3px solid rgb(var(--border-color));
+    }
+
+    .answer-view-section hr {
+      border-top: 1px solid rgba(var(--border-color), 0.4);
+    }
+
+    .post-content,
+    .answer-content {
+      margin: 15px 0;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      
+      font-size: 16px;
+    }
+
+    .post-content,
+    .answer-content {
+      font-weight: 500;
+      letter-spacing: -0.025em;
+    }
+    
+    .post-content {
+      min-height: 200px;
+    }
+
+    .admin-answer-section {
+      display: none;
+      margin-top: 40px;
+      position: relative;
+    }
+
+    .admin-answer-section textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 20px 15px;
+      box-sizing: border-box;
+      resize: none;
+    }
+
+    .admin-answer-section .answer-btns {
+      position: absolute;
+      right: 15px;
+      bottom: 5px;
+    }
+
+    .admin-answer-section #answer-sub-btn {
+      background-color: transparent;
+    }
+
+    .admin-answer-section #answer-sub-btn:hover,
+    .admin-answer-section #answer-sub-btn:active {
+      transform: scale(1);
+    }
+
+    .answer-view-section {
+      background-color: #f9f9f9;
+      margin: 10px 0;
+      border-radius: 10px;
+      box-shadow: 0 3px 5px rgba(var(--shadow-color), 0.2);
+      overflow: hidden;
+      padding: 20px;
+
+      position: relative;
+    }
+
+    .answer-view-section #answer-delete {
+      position: absolute;
+      z-index: 5000;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      background-color: transparent;
+
+      user-select: none;
+    }
+
+    .post-bottom {
+      margin: 30px 0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .post-bottom button {
+      width: 60px;
+      height: 30px;
+      box-sizing: border-box;
+      font-weight: 500;
+
+      border-radius: 15px;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="header-container"></div>
+
+  <main>
+    <section class="post-container">
+      <div class="back-to-list">
+        <a href="/community/inquiry-list.html"><img src="/assets/images/common/angle-down-solid.svg" alt=""><span
+            class="qna-text">Q&A</span>&nbsp;목록으로 돌아가기</a>
+      </div>
+      <div class="post-header">
+        <h1 id="title"></h1>
+        <hr class="hr2">
+        <div class="post-info" id="post-info-container"></div>
+      </div>
+      <hr>
+      <div id="content" class="post-content"></div>
+      <hr class="hr2">
+      <section id="answer-view-section" class="answer-view-section">
+        <button id="answer-delete">❌</button>
+        <div id="answer-content"></div>
+      </section>
+      <section id="admin-answer-section" class="admin-answer-section">
+        <textarea id="admin-answer"></textarea>
+        <div class="answer-btns">
+          <button type="button" id="answer-sub-btn">등록</button>
+        </div>
+      </section>
+
+      <div class="post-bottom">
+        <button type="button" id="edit-btn">수정</button>
+        <button type="button" id="delete-btn">삭제</button>
+        <button type="button" onclick="location.href='inquiry-list.html'">목록</button>
+      </div>
+    </section>
+  </main>
+
+  <div id="footer-container"></div>
+  <script type="module">
+    import { mountHeader } from "/components/header.js";
+    const headerContainer = document.getElementById('header-container');
+    
+    await mountHeader(headerContainer);
+
+    function getQueryParam(key) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(key);
+    }
+
+    function renderPostDetail() {
+      const postId = getQueryParam('id');
+      if (!postId) {
+        alert('잘못된 접근입니다.');
+        location.href = 'inquiry-list.html';
+        return;
+      }
+      const posts = JSON.parse(localStorage.getItem('posts')) || [];
+
+      const post = posts.find(p => p.id === postId);
+
+      if (!post) {
+        alert('존재하지 않는 게시글입니다.');
+        location.href = 'inquiry-list.html';
+        return;
+      }
+
+      document.getElementById('title').innerText = post.title;
+      document.getElementById('content').innerText = post.content;
+
+      const infoContainer = document.getElementById('post-info-container');
+      const infoItems = [
+        `<span class="author-info"><span class="info-name">작성자:</span>&nbsp;&nbsp;${post.author} <span class="sub-info">(${post.authorId})</span></span>`,
+        `<span class="date-info"><span class="info-name">작성일:</span>&nbsp;&nbsp;${post.date}`
+      ];
+
+      if (post.renewalDate) {
+        infoItems.push(`<span class="divider">|</span><span class="info-name">수정일:</span>&nbsp;&nbsp;${post.renewalDate}`);
+      }
+      infoItems.push(`</span`);
+
+      infoContainer.innerHTML = infoItems.join('');
+
+      const currentUser = localStorage.getItem('currentUser');
+      const editBtn = document.getElementById('edit-btn');
+      const deleteBtn = document.getElementById('delete-btn');
+      const answerViewSection = document.getElementById('answer-view-section');
+      const adminAnswerSection = document.getElementById('admin-answer-section');
+
+      if (currentUser !== post.authorId && currentUser !== 'admin') {
+        editBtn.style.display = 'none';
+        deleteBtn.style.display = 'none';
+      }
+
+      answerViewSection.style.display = 'none';
+      adminAnswerSection.style.display = 'none';
+
+      if (post.answered) {
+        answerViewSection.style.display = 'block';
+        document.getElementById('answer-content').innerHTML = `<div class="answer-header"><span class="info-name">답변일:</span> ${post.replyDate}</div><hr><div class="answer-content">${post.reply}</div>`;
+        document.getElementById('answer-delete').style.display = (currentUser === 'admin') ? 'inline-block' : 'none';
+      } else if (currentUser === 'admin') {
+        adminAnswerSection.style.display = 'block';
+      }
+    }
+
+    function formatDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      const seconds = String(date.getSeconds()).padStart(2, '0');
+
+      return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+    }
+
+    function submitAnswer() {
+      const postId = getQueryParam('id');
+      const answerText = document.getElementById('admin-answer').value;
+
+      if (!answerText.trim()) {
+        alert('답변 내용을 입력해주세요.');
+        return;
+      }
+
+      const posts = JSON.parse(localStorage.getItem('posts')) || [];
+      const postIndex = posts.findIndex(p => p.id === postId);
+
+      if (postIndex !== -1) {
+        posts[postIndex].answered = true;
+        posts[postIndex].reply = answerText;
+        posts[postIndex].replyDate = formatDate(new Date());
+
+        localStorage.setItem('posts', JSON.stringify(posts));
+        location.reload();
+      }
+    }
+
+    document.getElementById('answer-sub-btn').addEventListener('click', submitAnswer);
+
+    function editPost() {
+      const postId = getQueryParam('id');
+      if (!postId) {
+        alert('잘못된 접근입니다.');
+        return;
+      }
+      location.href = `inquiry-write.html?id=${postId}`;
+    }
+
+    document.getElementById('edit-btn').addEventListener('click', editPost);
+
+    function deletePost() {
+      if (!confirm('삭제된 게시글은 복구할 수 없습니다. 정말 삭제하시겠습니까?')) {
+        return;
+      }
+
+      const postId = getQueryParam('id');
+      if (!postId) {
+        alert('잘못된 접근입니다.');
+        return;
+      }
+
+      const posts = JSON.parse(localStorage.getItem('posts')) || [];
+
+      const updatedPosts = posts.filter(post => post.id !== postId);
+
+      localStorage.setItem('posts', JSON.stringify(updatedPosts));
+      location.href = 'inquiry-list.html';
+    }
+
+    document.getElementById('delete-btn').addEventListener('click', deletePost);
+
+    function deleteAnswer() {
+      if (!confirm('답변을 정말 삭제하시겠습니까?')) {
+        return;
+      }
+
+      const postId = getQueryParam('id');
+      const posts = JSON.parse(localStorage.getItem('posts')) || [];
+      const postIndex = posts.findIndex(p => p.id === postId);
+
+      if (postIndex !== -1) {
+        posts[postIndex].answered = false;
+        delete posts[postIndex].reply;
+        delete posts[postIndex].replyDate;
+
+        localStorage.setItem('posts', JSON.stringify(posts));
+        location.reload();
+      }
+    }
+
+    document.getElementById('answer-delete').addEventListener('click', deleteAnswer);
+
+    renderPostDetail();
+  </script>
+</body>
+
+</html>

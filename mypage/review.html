@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DayFit Calendar</title>
+
+  <link rel="stylesheet" href="/assets/css/reset.css">
+  <link rel="stylesheet" href="/components/header.css">
+  <link rel="stylesheet" href="/assets/css/common.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  <link rel="stylesheet" href="/assets/css/pages/mypage/calendarCss.css">
+  <link rel="stylesheet" href="/assets/css/pages/mypage/review.css">
+</head>
+
+<body>
+  <div id="header-container"></div>
+  <main>
+    <div class="container">
+      <div class="left-box">
+        <div class="calendar"></div>
+      </div>
+
+      <div class="right-box">
+        <div class="title" id="selected-date-title">0월 0일의 기록입니다.</div>
+
+        <div id="today-status-alert" class="today-warning" style="display: none;">
+          오늘 운동이 종료되지 않았습니다.
+        </div>
+
+        <div class="list-container">
+          <div id="workout-list"></div>
+
+          <div class="progress-container" id="progress-area">
+            <div class="progress-percentage"><span class="value" id="progress-percentage-value">0</span><span
+                class="percent">%</span></div>
+            <svg class="progress-svg" width="80" height="80">
+              <circle class="progress-bg" cx="40" cy="40" r="36"></circle>
+              <circle class="progress-bar" id="progress-circle" cx="40" cy="40" r="36"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <div class="memo-section">
+          <label for="memo-input">소감</label>
+          <textarea id="memo-input" placeholder="여기에 소감을 입력하세요."></textarea>
+        </div>
+
+        <button class="save-btn with-theme-color" id="save-button">저장하기</button>
+      </div>
+    </div>
+  </main>
+  <div id="footer-container"></div>
+  <script type="module">
+    import { mountHeader } from "/components/header.js";
+    const headerContainer = document.getElementById('header-container');
+    
+    await mountHeader(headerContainer);
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr/dist/l10n/ko.js"></script>
+
+  <script>
+    // ==========================================
+    // 로그인 시스템 연동 변수 및 세팅 (가상 복사 데이터 제거)
+    // ==========================================
+    let userMap = {};         // 로컬 스토리지의 전체 유저 맵
+    let currentUserId = "";   // 현재 로그인한 유저 ID
+    let userData = null;      // 현재 로그인한 유저 객체
+
+    let currentSelectedDate = "";
+
+    // 시스템 오늘 날짜 구해오기 (시간 제외 포맷팅 'YYYY-MM-DD')
+    function getTodayString() {
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd}`;
+    }
+
+    // [변경] 현재 로그인한 유저의 정보를 로컬 스토리지에서 파싱 연동
+    function loadUserData() {
+      currentUserId = localStorage.getItem('currentUser');
+      const storedUsers = localStorage.getItem('users');
+
+      if (!currentUserId || !storedUsers) {
+        alert("로그인 정보가 유효하지 않습니다. 로그인 페이지로 이동합니다.");
+        window.location.href = "../auth/login.html";
+        return false;
+      }
+
+      userMap = JSON.parse(storedUsers);
+      userData = userMap[currentUserId];
+
+      if (!userData) {
+        alert("유저 데이터를 찾을 수 없습니다.");
+        return false;
+      }
+
+      console.log(`[되돌아보기] 로그인 유저 '${currentUserId}' 연동 완료`);
+
+      // 오늘 날짜 데이터 방어 코드
+      const todayStr = getTodayString();
+      if (!userData.plans) userData.plans = {};
+      if (!userData.plans[todayStr]) {
+        userData.plans[todayStr] = { "memo": "", "status": "no plan", "program": {} };
+        saveUserData(); // 구조 초기생성 시 스토리지에 즉시 마킹
+      }
+      return true;
+    }
+
+    // [추가] 변경된 사항을 전체 유저 맵 데이터베이스에 반영 후 브라우저 세이브
+    function saveUserData() {
+      if (currentUserId && userData) {
+        userMap[currentUserId] = userData;
+        localStorage.setItem("users", JSON.stringify(userMap));
+        console.log("로컬 스토리지에 메모/상태 영구 업데이트 완료");
+      }
+    }
+
+    function formatCalendarHeader(instance) {
+      const year = instance.currentYear;
+      const month = String(instance.currentMonth + 1);
+      const monthElement = instance.monthNav.querySelector('.flatpickr-current-month');
+      if (monthElement) {
+        monthElement.innerHTML = `${year}년 ${month}월`;
+      }
+    }
+
+    // 화면 렌더링 함수
+    function renderPlanData(dateStr) {
+      currentSelectedDate = dateStr;
+
+      const todayStr = getTodayString();
+      const dateObj = new Date(dateStr);
+      const selectedDateFormatted = dateStr;
+
+      // 해당 날짜에 데이터 오브젝트 자체가 없다면 기본구조 생성
+      if (!userData.plans[dateStr]) {
+        userData.plans[dateStr] = { "memo": "", "status": "no plan", "program": {} };
+        saveUserData();
+      }
+
+      let plan = userData.plans[dateStr];
+      const listContainer = document.getElementById("workout-list");
+      const memoInput = document.getElementById("memo-input");
+      const alertBanner = document.getElementById("today-status-alert");
+      const progressArea = document.getElementById("progress-area");
+
+      // 기본 UI 초기화
+      listContainer.innerHTML = "";
+      memoInput.value = "";
+      alertBanner.style.display = "none";
+      progressArea.style.display = "block";
+
+      // 과거/미래 날짜 status 강제 보정 규칙
+      if (selectedDateFormatted < todayStr) {
+        if (Object.keys(plan.program).length === 0) {
+          plan.status = "no plan";
+        } else {
+          plan.status = "finished";
+        }
+        saveUserData();
+      } else if (selectedDateFormatted > todayStr && plan.status !== "no plan") {
+        plan.status = "not started";
+        saveUserData();
+      }
+
+      memoInput.value = plan.memo || "";
+
+      // 모드 판별 핵심 조건 (미래 전체 또는 오늘이면서 시작 전/계획 없음 상태)
+      const isPlanMode = (selectedDateFormatted > todayStr) ||
+        (selectedDateFormatted === todayStr && ["no plan", "not started", "started"].includes(plan.status));
+
+      // 1. 타이틀 텍스트 세팅
+      if (isPlanMode) {
+        document.getElementById("selected-date-title").innerText = `${dateObj.getMonth() + 1}월 ${dateObj.getDate()}일의 운동계획입니다.`;
+        // progressArea.style.display = "none"; // 계획 모드일 땐 원형 그래프 숨김
+
+        if (selectedDateFormatted === todayStr && plan.status === "started") {
+          
+          
+          alertBanner.style.display = "block";
+        }
+      } else {
+        document.getElementById("selected-date-title").innerText = `${dateObj.getMonth() + 1}월 ${dateObj.getDate()}일의 기록입니다.`;
+      }
+
+      // 2. 데이터가 비어있을 때 예외 처리 분기구문
+      if (plan.status === "no plan" || !plan.program || Object.keys(plan.program).length === 0) {
+        updateProgressBar(0, 0);
+        // progressArea.style.display = "none";
+
+        if (selectedDateFormatted < todayStr) {
+          listContainer.innerHTML = `
+                        <div class="no-data" style="color: #888; font-style: italic;">
+                            해당 날짜에 기록된 운동 데이터가 없습니다.
+                        </div>
+                    `;
+        } else {
+          listContainer.innerHTML = `
+                        <div class="no-data">
+                             오늘의 운동 계획이 아직 없어요!<br>
+                            <span class="no-plan-link" onclick="location.href='plan.html?date=${selectedDateFormatted}'">계획하기 페이지</span>에서 운동 계획을 설정해봅시다!
+                        </div>
+                    `;
+        }
+        return;
+      }
+
+      // 3. 운동 리스트 출력 루프
+      // 3. 운동 리스트 출력 루프
+      let totalSets = 0;
+      let completedSets = 0;
+
+      for (const category in plan.program) { // category는 "맨몸 운동", "유산소", "가슴" 등 한국어 부위명
+        const workouts = plan.program[category];
+
+        // 부위별 특성 판별 조건
+        const isBodyweight = category === "맨몸 운동";
+        const isCardio = category === "유산소";
+        const isNoKg = isBodyweight || isCardio;
+        const unitText = isCardio ? "분" : (workouts == "플랭크") ? "초" : "회";
+
+        workouts.forEach((workoutObj) => {
+          const sets = workoutObj.set;
+          const totalSetCount = sets.length;
+
+          const checkedCount = sets.filter(s => s.isCompleted).length;
+          totalSets += totalSetCount;
+          completedSets += checkedCount;
+
+          // 달성도에 따른 아이콘 색상 판별 로직 추가
+          let iconColor = "";
+          if (isPlanMode) {
+            iconColor = "darkgray";
+          } else if (totalSetCount > 0 && checkedCount === totalSetCount) {
+            iconColor = "#0094F7"; // 모든 세트 완료 (파란색)
+          } else if (checkedCount === 0) {
+            iconColor = "#E05A5A"; // 모두 미완료 (빨간색 - 기존 프로그래스바 색상 톤에 맞춤, 원하시면 'red'로 변경 가능)
+          } else {
+            iconColor = "gold";    // 하나라도 완료된 세트가 있는 경우 (노란색)
+          }
+
+          const iconSymbol = "■"; // 엑스 표시 대신 네모 기호로 통일
+
+          const groupDiv = document.createElement("div");
+          groupDiv.className = "workout-group";
+
+          // HTML 템플릿에 iconColor를 인라인 스타일로 적용
+          let html = `
+    <div class="workout-header">
+        ${`<span class="status-icon" style="color: ${iconColor};">${iconSymbol}</span>`}
+        <span>${workoutObj.workout}</span>
+        <span style="font-size:14px; color:#666; margin-left: 8px;">${totalSetCount}세트</span>
+    </div>
+    <div class="set-list">
+`;
+
+          sets.forEach((setObj, sIdx) => {
+            const isChecked = setObj.isCompleted ? "checked" : "";
+
+            html += `<div class="set-item">`;
+            if (!isPlanMode) {
+              html += `<input type="checkbox" ${isChecked} readonly onclick="return false;">`;
+            }
+            html += `
+                                <span class="set-no">#${sIdx + 1}</span>
+                                ${isNoKg ? '' : `<span>${setObj.kgs}kg</span>`}
+                                <span>${setObj.rep}${unitText}</span>
+                            </div>
+                        `;
+          });
+
+          html += `</div>`;
+          groupDiv.innerHTML = html;
+          listContainer.appendChild(groupDiv);
+        });
+      }
+
+      // 원형 달성률 그래프 동적 갱신
+      if (true) {
+        // if (!isPlanMode) {
+        updateProgressBar(completedSets, totalSets);
+      }
+    }
+
+    // 원형 달성률 원 갱신 함수
+    function updateProgressBar(completed, total) {
+      const circle = document.getElementById("progress-circle");
+      const percentValueElem = document.getElementById('progress-percentage-value');
+      const totalRadius = 226;
+
+      // if (total === 0) {
+      //   circle.style.strokeDashoffset = totalRadius;
+      //   circle.style.stroke = 'crimson';
+      //   return;
+      // }
+
+      const percentage = (total == 0) ? 0 : completed / total;
+      const strokeColor = (percentage == 0) ? 'rgb(230, 230, 230)' :
+        (percentage < 0.33) ? 'rgb(224, 90, 90)' :
+          (percentage < 0.66) ? 'gold' :
+            (percentage < 1) ? 'mediumseagreen' :
+              'rgb(0, 148, 247)';
+
+
+      const offset = totalRadius - (percentage * totalRadius);
+      circle.style.strokeDashoffset = offset;
+      circle.style.stroke = strokeColor;
+      percentValueElem.textContent = String(Math.floor(percentage * 100));
+    }
+
+    // 초기 유저 상태 로드 성공 시에만 플랫피커 및 캘린더 드로우 연동
+    if (loadUserData()) {
+      flatpickr(".calendar", {
+        dateFormat: 'Y-m-d',
+        inline: true,
+        locale: "ko",
+        defaultDate: getTodayString(),
+
+        onDayCreate: function (dObj, dStr, fp, dayElem) {
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          if (dayElem.dateObj < today) {
+            dayElem.classList.add("past-day");
+          }
+        },
+        onReady: function (selectedDates, dateStr, instance) {
+          formatCalendarHeader(instance);
+          if (selectedDates.length > 0) {
+            const formattedDate = instance.formatDate(selectedDates[0], "Y-m-d");
+            renderPlanData(formattedDate);
+          }
+        },
+        onMonthChange: function (selectedDates, dateStr, instance) {
+          setTimeout(() => formatCalendarHeader(instance), 0);
+        },
+        onYearChange: function (selectedDates, dateStr, instance) {
+          setTimeout(() => formatCalendarHeader(instance), 0);
+        },
+        onChange: function (selectedDates, dateStr, instance) {
+          renderPlanData(dateStr);
+        }
+      });
+    }
+
+    // 저장 버튼 이벤트 (로컬 스토리지 데이터 백업 매핑 완료)
+    document.getElementById("save-button").addEventListener("click", function () {
+      if (!currentSelectedDate) return;
+
+      const memoText = document.getElementById("memo-input").value;
+
+      // 1. 가져온 유저 전역 껍데기에 메모 갱신
+      userData.plans[currentSelectedDate].memo = memoText;
+
+      // 2. 로컬 스토리지에 DB 데이터 저장 함수 트리거
+      saveUserData();
+
+      alert(`${currentSelectedDate}의 변경사항(메모)이 정상적으로 저장되었습니다.`);
+    });
+  </script>
+</body>
+
+</html>
